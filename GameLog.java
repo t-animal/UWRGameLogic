@@ -1,11 +1,8 @@
 import java.util.ArrayList;
-import java.util.Date;
-
-import Game.GameAction;
 
 //TODO: GameLogEntry-Klasse fuer sortierbare Liste!
 public class GameLog {
-	private ArrayList<Long> logTime = new ArrayList<Long>();
+	private ArrayList<Integer> logTime = new ArrayList<Integer>();
 	private ArrayList<Game.Colors> logTeam = new ArrayList<Game.Colors>(); 
 	private ArrayList<Integer> logPlayer = new ArrayList<Integer>(); 
 	private ArrayList<Game.GameAction> logAction = new ArrayList<Game.GameAction>();
@@ -16,7 +13,7 @@ public class GameLog {
 		
 	}
 	
-	public int createNewLogEntry(long gameTime){
+	public int createNewLogEntry(int gameTime){
 		logTime.add(gameTime);
 		logTeam.add(Game.Colors.UNDEFINED);
 		logPlayer.add(-1);
@@ -37,7 +34,7 @@ public class GameLog {
 		logComment.set(logNumber, comment);
 	}
 	
-	public Game.GameAction logExchange(long gameTime, Game.Colors team, int playerIn, int playerOut, String comment){
+	public void logExchange(int gameTime, Game.Colors team, int playerIn, int playerOut, String comment){
 		logTime.add(gameTime);
 		logTeam.add(team);
 		logPlayer.add(exchanges.size());
