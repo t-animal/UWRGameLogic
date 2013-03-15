@@ -39,33 +39,51 @@ public class Game {
 	private TimerTask penaltyThrowTimerTask;
 	
 	private LinkedList<TwoMinutePenaltyTimerTask> twoMinutePenaltyTimerTasks = new LinkedList<TwoMinutePenaltyTimerTask>();
-	
+
+	//assuming max 8 suspended players, 1 penalty throw, 1 time measurement => each needs its own thread in worst case!
+	final private ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(10, new DaemonThreadFactory());
 
 	private class DaemonThreadFactory implements ThreadFactory{
 		public Thread newThread(Runnable r) { Thread t = new Thread(r); t.setDaemon(true); return t; }
 	}
+	
 	private class TwoMinutePenaltyTimerTask extends TimerTask{
 		int playerNumber;
 		Game.Colors team;
+		long startedAt;
 		
-		public TwoMinutePenaltyTimerTask(int playerNumber, Game.Colors team){
+		public TwoMinutePenaltyTimerTask(int playerNumber, Game.Colors team, long startedAt){
 			super();
 			
 			this.playerNumber = playerNumber;
 			this.team = team;
+			this.startedAt = startedAt;
+		}
+		
+		private long getRestTimeMillis(){
+			return getCurrentGameTimeMillis()-startedAt;
+		}
+		
+		public int getRestTime(){
+			return (int) getRestTimeMillis()/1000;
 		}
 		
 		public void allowPlayerBackIn(){
 			//TODO: Spieler wieder reinstellen
 			System.out.println("Spieler "+playerNumber+" von Team "+team+" darf wieder mitspielen");
+			twoMinutePenaltyTimerTasks.remove(this);
 		}
 		
 		public void run(){
-			allowPlayerBackIn();
+			long restTime = getRestTimeMillis();
+			if(restTime<=0){
+				allowPlayerBackIn();
+			}else{
+				timer.schedule(this, restTime, TimeUnit.MILLISECONDS);
+				System.out.println("Player "+playerNumber+" of team "+team+" would be allowed in, but game has been stopped. Rechecking in "+restTime);
+			}
 		}
 	}
-	//assuming max 8 suspended players, 1 penalty throw, 1 time measurement => each needs its own thread in worst case!
-	final private ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(10, new DaemonThreadFactory());
 	
 	
 	public enum GameAction {
@@ -102,7 +120,7 @@ public class Game {
 	
 	
 	/*
-	 * Game time related stuff from here
+	 * Game time related stuff from here on
 	 */
 	public void start(){
 		if(currentHalfTime == halfTimesCount){
@@ -178,7 +196,7 @@ public class Game {
 
 	
 	/*
-	 * Interaktion with referee from here
+	 * Interaktion with referee from here on
 	 */
 	public void refereeInteraktion(){
 		if(!isStarted()){
@@ -233,7 +251,7 @@ public class Game {
 	
 	
 	/*
-	 * Penalty throw related stuff from here
+	 * Penalty throw related stuff from here on
 	 */
 	
 	public void startPenaltyThrow(){
@@ -271,11 +289,11 @@ public class Game {
 	
 	
 	/*
-	 * 2 minute suspension related stuff from here
+	 * 2 minute suspension related stuff from here on
 	 */
 	
 	public void suspendPlayer(int playerNumber, Game.Colors team){
-		TwoMinutePenaltyTimerTask task = new TwoMinutePenaltyTimerTask(playerNumber, team);
+		TwoMinutePenaltyTimerTask task = new TwoMinutePenaltyTimerTask(playerNumber, team, getCurrentGameTimeMillis());
 		twoMinutePenaltyTimerTasks.add(task);
 		timer.schedule(task, 2*60*1000, TimeUnit.MILLISECONDS);
 	}
@@ -290,28 +308,32 @@ public class Game {
 		
 		TwoMinutePenaltyTimerTask task = twoMinutePenaltyTimerTasks.remove(i);
 		task.cancel();
-		task.run(); //Directly release this player from the penalty
+		task.allowPlayerBackIn();
 	}
 	
 	private void unsuspendAllPlayers(){
 		for(TwoMinutePenaltyTimerTask task: twoMinutePenaltyTimerTasks){
 			task.cancel();
-			task.run(); //Directly release this player from the penalty
+			task.allowPlayerBackIn();
 		}
 		twoMinutePenaltyTimerTasks.clear();
 	}
 	
 	
+	/*
+	 * Some basic testing from here on
+	 */
+	
 	public static void main(String[] args) throws IOException{
 		
-		System.out.println(new Date()+" Starting a test game of 2 times 1 Minute with stopping time.");
+		System.out.println(new Date()+" Starting a test game of 2 times 3 Minute with stopping time.");
 		System.out.println(new Date()+" Honk via <ENTER>.");
 		System.out.println(new Date()+" Decisions via:  <P(B|W)> Penalty throw against B or W.");
 		System.out.println(new Date()+"                 <T(B|W)#> two Minutes against B or W, # is playerno (one digit).");
 		System.out.println(new Date()+"                 <G(B|W)#> Goal for B or W, # is scorerno (one digit)");
 		System.out.println(new Date()+"                 <X(B|W)##> exchange in Team B or W. First # is playerno in, second is out.\n");
 		
-		Game g = new Game("Bamberg1", "Bamberg2", "foo", "bar", "bla", 1, 2, true);
+		Game g = new Game("Bamberg1", "Bamberg2", "foo", "bar", "bla", 3, 2, true);
 		
 		System.out.println("Start: "+g);
 		
