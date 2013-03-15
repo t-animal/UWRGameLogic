@@ -80,7 +80,7 @@ public class Game {
 				allowPlayerBackIn();
 			}else{
 				timer.schedule(this, restTime, TimeUnit.MILLISECONDS);
-				System.out.println("Player "+playerNumber+" of team "+team+" would be allowed in, but game has been stopped. Rechecking in "+restTime);
+				System.err.println("Player "+playerNumber+" of team "+team+" would be allowed in, but game has been stopped. Rechecking in "+restTime);
 			}
 		}
 	}
@@ -141,10 +141,10 @@ public class Game {
 					System.out.println(new Date()+" Halbzeit zu ende! ");
 				}else if(penaltyThrowRunning){
 					timer.schedule(this, penaltyThrowDuration-getCurrentPenaltyThrowTimeMillis(), TimeUnit.MILLISECONDS);
-					System.out.println(new Date()+" Halbzeit zu ende, aber Strafwurf laeuft noch! => Warte "+penaltyThrowDuration+"-"+getCurrentPenaltyThrowTimeMillis());
+					System.err.println(new Date()+" Halbzeit zu ende, aber Strafwurf laeuft noch! => Warte "+penaltyThrowDuration+"-"+getCurrentPenaltyThrowTimeMillis());
 				}else{
 					timer.schedule(this, halfTimesDuration-getCurrentGameTimeMillis(), TimeUnit.MILLISECONDS);
-					System.out.println(new Date()+" Halbzeit zu ende, aber Zeit war "+timeWasStoppedFor+"ms angehalten!");
+					System.err.println(new Date()+" Halbzeit zu ende, aber Zeit war "+timeWasStoppedFor+"ms angehalten!");
 				}
 			}
 		};
@@ -228,7 +228,7 @@ public class Game {
 		switch(incident){
 		case PENALTY_THROW:
 			if(!isStopped()){
-				System.out.println("Warning: Free throw given AFTER game was started.");
+				System.err.println("Warning: Free throw given AFTER game was started.");
 				stopClock();
 				startWithPenaltyThrow();
 				resumeClock();
