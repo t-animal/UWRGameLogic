@@ -137,7 +137,7 @@ public class Game {
 	
 	public String toString(){
 		int curTime=getCurrentGameTime();
-		return blue+" vs "+white+": "+blueScore+" - "+whiteScore+" The game is currently "+(isStarted() && isStopped()?"stopped":"running")+
+		return blue+" vs "+white+": "+blueScore+" - "+whiteScore+" The game is currently "+(!isStarted() || isStopped()?"stopped":"running")+
 					" at "+(curTime/60)+"m"+(curTime%60)+"s in halftime #"+currentHalfTime+".";
 	}
 	
@@ -168,7 +168,7 @@ public class Game {
 					System.err.println(new Date()+" Halbzeit zu ende, aber Strafwurf laeuft noch! => Warte "+penaltyThrowDuration+"-"+getCurrentPenaltyThrowTimeMillis());
 				}else{
 					timer.schedule(this, halfTimesDuration-getCurrentGameTimeMillis(), TimeUnit.MILLISECONDS);
-					System.err.println(new Date()+" Halbzeit zu ende, aber Zeit war "+timeWasStoppedFor+"ms angehalten!");
+					System.err.println(new Date()+" Halbzeit zu ende, aber Zeit war "+timeWasStoppedFor+"ms angehalten! Warte "+halfTimesDuration+" - "+getCurrentGameTimeMillis());
 				}
 			}
 		};
