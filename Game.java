@@ -10,15 +10,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.TimerTask;
 
 public class Game {
-	
-	private Date start = null;
-	private long halfTimesDuration;
-	private int halfTimesCount;
-	private int currentHalfTime=0;
-	private boolean stoppingTime;
-	private boolean nonStoppingTimeGameIsRunning = false;
-	private boolean gameIsFinished;
-	
+	/*
+	 * Game describing variables
+	 */
 	private String blue;
 	private String white;
 	private int blueScore=0;
@@ -29,16 +23,28 @@ public class Game {
 	private String uwRef1;
 	private String uwRef2;
 	private String gameLeader;
+	
+	private boolean stoppingTime;
+	private long halfTimesDuration;
+	private int halfTimesCount;
+	
+	/*
+	 * Internal state variables
+	 */
+	private Date start = null;
+	private int currentHalfTime = 0;
+	private boolean nonStoppingTimeGameIsRunning = false;
+	private boolean gameIsFinished;
+
 	private GameLog gameLog;
 	
 	private Date clockStoppedAt;
-	private boolean clockIsStopped = true;
-	private long timeWasStoppedFor=0;
+	private long timeWasStoppedFor = 0;
 	private Runnable gameTimeRunnable;
 	private ScheduledFuture<?> gameTimeRunnableFuture;
 
-	private long penaltyThrowDuration=45000;
-	private boolean penaltyThrowOnResume=false;
+	private long penaltyThrowDuration = 45000;
+	private boolean penaltyThrowOnResume = false;
 	private Date penaltyThrowStartedAt;
 	private Runnable penaltyThrowRunnable;
 	private ScheduledFuture<?> penaltyThrowRunnableFuture;
