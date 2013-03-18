@@ -67,7 +67,7 @@ public class Game {
 		}
 		
 		private long getRestTimeMillis(){
-			return 120*1000-getCurrentGameTimeMillis()-startedAt;
+			return 120*1000-(getCurrentGameTimeMillis()-startedAt);
 		}
 		
 		public int getRestTime(){
