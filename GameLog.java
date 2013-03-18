@@ -1,45 +1,121 @@
 import java.util.ArrayList;
+import java.util.Date;
 
-//TODO: GameLogEntry-Klasse fuer sortierbare Liste!
+
 public class GameLog {
-	private ArrayList<Integer> logTime = new ArrayList<Integer>();
-	private ArrayList<Game.Colors> logTeam = new ArrayList<Game.Colors>(); 
-	private ArrayList<Integer> logPlayer = new ArrayList<Integer>(); 
-	private ArrayList<Game.GameAction> logAction = new ArrayList<Game.GameAction>();
-	private ArrayList<String> logComment = new ArrayList<String>();
-	private ArrayList<Integer[]> exchanges = new ArrayList<Integer[]>();
-	
-	public GameLog(){
-		
+
+	public class Entry implements Comparable<Entry> {
+		//TODO:Halbzeiten
+		Integer logTime;
+		Game.Colors logTeam;
+		Integer logPlayer;
+		Game.GameAction logAction;
+		String logComment;
+		int exchangeIn;
+		int exchangeOut;
+
+		/*
+		 * For any incident except exchanges
+		 */
+		public Entry(Integer logTime, Game.Colors logTeam, Integer logPlayer,
+				Game.GameAction logAction, String logComment) {
+			this.logTime = logTime;
+			this.logTeam = logTeam;
+			this.logPlayer = logPlayer;
+			this.logAction = logAction;
+			this.logComment = logComment;
+		}
+
+		/*
+		 * For exchanges
+		 */
+		public Entry(Integer logTime, Game.Colors logTeam, int exchangeIn,
+				int exchangeOut) {
+			this.logTime = logTime;
+			this.logTeam = logTeam;
+			this.exchangeIn = exchangeIn;
+			this.exchangeOut = exchangeOut;
+		}
+
+		/*
+		 * For when the incident cannot yet be determined
+		 */
+		public Entry(Integer logTime) {
+			this.logTime = logTime;
+			this.logTeam = Game.Colors.UNDEFINED;
+			this.logAction = Game.GameAction.UNDEFINED;
+		}
+
+		@Override
+		public int compareTo(Entry o) {
+			return logTime.compareTo(o.logTime);
+
+		}
+
+		public String toString() {
+			if (logAction != Game.GameAction.EXCHANGE) {
+				return logTime + ": " + logAction + " fuer/von Spieler Nummer "
+						+ logPlayer + " vom Team " + logTeam + "; "
+						+ logComment;
+			} else {
+				return logTime + ": Wechsel bei Team " + logTeam + ": Spieler "
+						+ exchangeIn + " wechselt ein fuer Spieler "
+						+ exchangeOut;
+			}
+		}
+
+	}
+
+	ArrayList<Entry> logList = new ArrayList<Entry>();
+
+	private int insertNewLogEntry(Entry newEntry) {
+		// TODO: Eventuell sortierung hier?
+		logList.add(newEntry);
+		System.err.println(new Date()+" new log entry created");
+		return logList.size();
+	}
+
+	public int createNewLogEntry(int gameTime) {
+		return insertNewLogEntry(new Entry(gameTime));
+
+	}
+
+	public int createNewLogEntry(int gameTime, Game.Colors team, int player,
+			Game.GameAction incident, String comment) {
+		return insertNewLogEntry(new Entry(gameTime, team, player, incident,
+				comment));
+	}
+
+	public void logNewestIncident(Game.Colors team, int player,
+			Game.GameAction incident, String comment) {
+		logIncident(logList.size() - 1, team, player, incident, comment);
+	}
+
+	public void logIncident(int logNumber, Game.Colors team, int player,
+			Game.GameAction incident, String comment) {
+		Entry e = logList.get(logNumber);
+		e.logTeam = team;
+		e.logPlayer = player;
+		e.logAction = incident;
+		e.logComment = comment;
+	}
+
+	public int createNewExchange(int gameTime, Game.Colors team, int playerIn,
+			int playerOut, String comment) {
+		return insertNewLogEntry(new Entry(gameTime, team, playerIn, playerOut));
 	}
 	
-	public int createNewLogEntry(int gameTime){
-		logTime.add(gameTime);
-		logTeam.add(Game.Colors.UNDEFINED);
-		logPlayer.add(-1);
-		logAction.add(Game.GameAction.UNDEFINED);
-		logComment.add("");
-		
-		return logTime.size();
+	public void deleteNewestIncident(){
+		logList.remove(logList.size()-1);
 	}
 	
-	public void logNewestIncident(Game.Colors team,  int player, Game.GameAction incident, String comment){
-		logIncident(logTime.size()-1, team, player, incident, comment);
+	public void deleteIncident(int logNumber){
+		logList.remove(logNumber);
 	}
 	
-	public void logIncident(int logNumber, Game.Colors team, int player, Game.GameAction incident, String comment){
-		logTeam.set(logNumber, team);
-		logPlayer.set(logNumber, player);
-		logAction.set(logNumber, incident);
-		logComment.set(logNumber, comment);
-	}
-	
-	public void logExchange(int gameTime, Game.Colors team, int playerIn, int playerOut, String comment){
-		logTime.add(gameTime);
-		logTeam.add(team);
-		logPlayer.add(exchanges.size());
-		logAction.add(Game.GameAction.EXCHANGE);
-		Integer[] players = {playerIn, playerOut};
-		exchanges.add(players);
+	public void printToConsole(){
+		for(Entry e: logList){
+			System.out.println(e.toString());
+		}
 	}
 }

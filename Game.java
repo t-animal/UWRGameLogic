@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Date;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +16,7 @@ public class Game {
 	private int halfTimesCount;
 	private int currentHalfTime=0;
 	private boolean stoppingTime;
+	private boolean gameIsFinished;
 	
 	private String blue;
 	private String white;
@@ -31,14 +33,16 @@ public class Game {
 	private Date clockStoppedAt;
 	private boolean clockIsStopped = true;
 	private long timeWasStoppedFor=0;
-	private TimerTask gameTimeTimerTask;
+	private Runnable gameTimeRunnable;
+	private ScheduledFuture<?> gameTimeRunnableFuture;
 
 	private long penaltyThrowDuration=45000;
 	private boolean penaltyThrowOnResume=false;
 	private Date penaltyThrowStartedAt;
-	private TimerTask penaltyThrowTimerTask;
+	private Runnable penaltyThrowRunnable;
+	private ScheduledFuture<?> penaltyThrowRunnableFuture;
 	
-	private LinkedList<TwoMinutePenaltyTimerTask> twoMinutePenaltyTimerTasks = new LinkedList<TwoMinutePenaltyTimerTask>();
+	public LinkedList<TwoMinutePenaltyRunnable> twoMinutePenaltyRunnables = new LinkedList<TwoMinutePenaltyRunnable>();
 
 	//assuming max 8 suspended players, 1 penalty throw, 1 time measurement => each needs its own thread in worst case!
 	final private ScheduledThreadPoolExecutor timer = new ScheduledThreadPoolExecutor(10, new DaemonThreadFactory());
@@ -47,12 +51,13 @@ public class Game {
 		public Thread newThread(Runnable r) { Thread t = new Thread(r); t.setDaemon(true); return t; }
 	}
 	
-	private class TwoMinutePenaltyTimerTask extends TimerTask{
+	private class TwoMinutePenaltyRunnable implements Runnable{
 		int playerNumber;
 		Game.Colors team;
 		long startedAt;
+		boolean isCancelled = false;
 		
-		public TwoMinutePenaltyTimerTask(int playerNumber, Game.Colors team, long startedAt){
+		public TwoMinutePenaltyRunnable(int playerNumber, Game.Colors team, long startedAt){
 			super();
 			
 			this.playerNumber = playerNumber;
@@ -61,33 +66,44 @@ public class Game {
 		}
 		
 		private long getRestTimeMillis(){
-			return getCurrentGameTimeMillis()-startedAt;
+			return 120*1000-getCurrentGameTimeMillis()-startedAt;
 		}
 		
 		public int getRestTime(){
 			return (int) getRestTimeMillis()/1000;
 		}
 		
+		//TODO: Cacnel auch ueber die Future machen
+		public void cancel(){
+			isCancelled = true;
+		}
+		
+		
 		public void allowPlayerBackIn(){
 			//TODO: Spieler wieder reinstellen
-			System.out.println("Spieler "+playerNumber+" von Team "+team+" darf wieder mitspielen");
-			twoMinutePenaltyTimerTasks.remove(this);
+			System.out.println(new Date()+" Spieler "+playerNumber+" von Team "+team+" darf wieder mitspielen");
+			twoMinutePenaltyRunnables.remove(this);
+			cancel();
 		}
 		
 		public void run(){
+			if(isCancelled){
+				return;
+			}
+			
 			long restTime = getRestTimeMillis();
 			if(restTime<=0){
 				allowPlayerBackIn();
 			}else{
 				timer.schedule(this, restTime, TimeUnit.MILLISECONDS);
-				System.err.println("Player "+playerNumber+" of team "+team+" would be allowed in, but game has been stopped. Rechecking in "+restTime);
+				System.err.println(new Date()+" Player "+playerNumber+" of team "+team+" would be allowed in, but game has been stopped. Rechecking in "+restTime);
 			}
 		}
 	}
 	
 	
 	public enum GameAction {
-		UNDEFINED, GOAL, FREE_THROW, WARNING, TEAM_WARNING, TWO_MINUTES, PENALTY_THROW, EXCHANGE
+		UNDEFINED, MISTAKE, GOAL, FREE_THROW, WARNING, TEAM_WARNING, TWO_MINUTES, PENALTY_THROW, EXCHANGE
 	}
 	public enum Colors {
 		UNDEFINED, BLUE, WHITE
@@ -114,7 +130,7 @@ public class Game {
 	
 	public String toString(){
 		int curTime=getCurrentGameTime();
-		return blue+" vs "+white+": "+blueScore+" - "+whiteScore+" The game is currently "+(isStopped()?"stopped":"running")+
+		return blue+" vs "+white+": "+blueScore+" - "+whiteScore+" The game is currently "+(isStarted() && isStopped()?"stopped":"running")+
 					" at "+(curTime/60)+"m"+(curTime%60)+"s in halftime #"+currentHalfTime+".";
 	}
 	
@@ -123,14 +139,14 @@ public class Game {
 	 * Game time related stuff from here on
 	 */
 	public void start(){
-		if(currentHalfTime == halfTimesCount){
+		if(gameIsFinished){
 			System.out.println("Spiel zu Ende - alle Halbzeiten gespielt.");
 			return;
 		}
 		start = new Date();
 		currentHalfTime++;
 		
-		gameTimeTimerTask = new TimerTask(){
+		gameTimeRunnable = new Runnable(){
 			public void run(){
 				boolean penaltyThrowRunning = penaltyThrowRunning();
 				if(!penaltyThrowRunning && getCurrentGameTimeMillis()>=halfTimesDuration){
@@ -138,6 +154,7 @@ public class Game {
 					start = null;
 					timeWasStoppedFor = 0;
 					unsuspendAllPlayers();
+					gameIsFinished = currentHalfTime == halfTimesCount;
 					System.out.println(new Date()+" Halbzeit zu ende! ");
 				}else if(penaltyThrowRunning){
 					timer.schedule(this, penaltyThrowDuration-getCurrentPenaltyThrowTimeMillis(), TimeUnit.MILLISECONDS);
@@ -149,7 +166,7 @@ public class Game {
 			}
 		};
 		
-		timer.schedule(gameTimeTimerTask, halfTimesDuration, TimeUnit.MILLISECONDS);
+		gameTimeRunnableFuture = timer.schedule(gameTimeRunnable, halfTimesDuration, TimeUnit.MILLISECONDS);
 	}
 	
 	public boolean isStarted(){
@@ -159,8 +176,8 @@ public class Game {
 	public void reset(){
 		start = null;
 		currentHalfTime = 0;
-		gameTimeTimerTask.cancel();
-		penaltyThrowTimerTask.cancel();
+		gameTimeRunnableFuture.cancel(false);//TODO: Wirft das nicht ne NPE?
+		penaltyThrowRunnableFuture.cancel(false);//TODO: Wirft das nicht ne NPE?
 		unsuspendAllPlayers();
 		//todo clear log
 	}
@@ -194,6 +211,9 @@ public class Game {
 		return 0;
 	}
 
+	public boolean isFinished(){
+		return gameIsFinished;
+	}
 	
 	/*
 	 * Interaktion with referee from here on
@@ -204,6 +224,7 @@ public class Game {
 			return;
 		}
 		
+		//TODO: Das hier wird zu oft aufgerufen (auch beim anhupen)
 		gameLog.createNewLogEntry(getCurrentGameTime());
 		
 		if(stoppingTime){
@@ -224,11 +245,14 @@ public class Game {
 	}
 	
 	public void decision(Game.Colors team,  int player, Game.GameAction incident, String comment){
+		if(incident == GameAction.MISTAKE){
+			gameLog.deleteNewestIncident();
+		}
 		gameLog.logNewestIncident(team, player, incident, comment);
 		switch(incident){
 		case PENALTY_THROW:
 			if(!isStopped()){
-				System.err.println("Warning: Free throw given AFTER game was started.");
+				System.err.println("Warning: Free throw given AFTER game was resumed.");
 				stopClock();
 				startWithPenaltyThrow();
 				resumeClock();
@@ -257,19 +281,19 @@ public class Game {
 	public void startPenaltyThrow(){
 		penaltyThrowOnResume = false;
 		penaltyThrowStartedAt = new Date();
-		penaltyThrowTimerTask = new TimerTask(){
+		penaltyThrowRunnable = new Runnable(){
 			public void run(){
 				//TODO: Abhupen
 				System.out.println(new Date()+" Strafwurf zu ende!");
 				cancelPenaltyThrow();
 			}
 		};
-		timer.schedule(penaltyThrowTimerTask, penaltyThrowDuration, TimeUnit.MILLISECONDS);
+		penaltyThrowRunnableFuture = timer.schedule(penaltyThrowRunnable, penaltyThrowDuration, TimeUnit.MILLISECONDS);
 	}
 	
 	public void cancelPenaltyThrow(){
 		penaltyThrowStartedAt = null;
-		penaltyThrowTimerTask.cancel();
+		penaltyThrowRunnableFuture.cancel(false);
 	}
 	
 
@@ -293,30 +317,29 @@ public class Game {
 	 */
 	
 	public void suspendPlayer(int playerNumber, Game.Colors team){
-		TwoMinutePenaltyTimerTask task = new TwoMinutePenaltyTimerTask(playerNumber, team, getCurrentGameTimeMillis());
-		twoMinutePenaltyTimerTasks.add(task);
+		TwoMinutePenaltyRunnable task = new TwoMinutePenaltyRunnable(playerNumber, team, getCurrentGameTimeMillis());
+		twoMinutePenaltyRunnables.add(task);
 		timer.schedule(task, 2*60*1000, TimeUnit.MILLISECONDS);
 	}
 	
 	public void unsuspendPlayer(Game.Colors team){		
 		int i=-1;
 		try{
-			while(twoMinutePenaltyTimerTasks.get(++i).team!=team);
+			while(twoMinutePenaltyRunnables.get(++i).team!=team);
 		}catch(IndexOutOfBoundsException e){
 			return;
 		}
 		
-		TwoMinutePenaltyTimerTask task = twoMinutePenaltyTimerTasks.remove(i);
-		task.cancel();
+		TwoMinutePenaltyRunnable task = twoMinutePenaltyRunnables.get(i);
 		task.allowPlayerBackIn();
 	}
 	
 	private void unsuspendAllPlayers(){
-		for(TwoMinutePenaltyTimerTask task: twoMinutePenaltyTimerTasks){
+		for(TwoMinutePenaltyRunnable task: twoMinutePenaltyRunnables){
 			task.cancel();
 			task.allowPlayerBackIn();
 		}
-		twoMinutePenaltyTimerTasks.clear();
+		twoMinutePenaltyRunnables.clear();
 	}
 	
 	
@@ -340,6 +363,11 @@ public class Game {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 	    String s;
 	    while ((s = in.readLine()) != null){
+	    	if(g.isFinished()){
+	    		System.out.println("\n-----------------------------\nGame has finished. Printing game log.");
+	    		g.gameLog.printToConsole();
+	    		return;
+	    	}
 	    	if(s.length() == 0){
 	    		g.refereeInteraktion();
 	    		System.out.println(new Date()+" Honking. Game state: "+g);
@@ -357,11 +385,11 @@ public class Game {
 		    		g.decision(s.charAt(1)=='W'?Colors.WHITE:Colors.BLUE, s.charAt(2)-'0', GameAction.GOAL, "");
 		    		break;
 		    	case 'X':
-		    		g.gameLog.logExchange(g.getCurrentGameTime(),s.charAt(1)=='W'?Colors.WHITE:Colors.BLUE, s.charAt(2)-'0', s.charAt(3)-'0', "");
+		    		g.gameLog.createNewExchange(g.getCurrentGameTime(),s.charAt(1)=='W'?Colors.WHITE:Colors.BLUE, s.charAt(2)-'0', s.charAt(3)-'0', "");
 		    	}	
 	    	}catch(IndexOutOfBoundsException e){
-		    	System.out.println("Please honk before filing a decision!");
-		    	//TODO: Might fuck up log. =>CHeck there 
+	    		e.printStackTrace();
+		    	System.out.println("Please honk before filing a decision and make sure you didn't mistype!");
 		    }
 	    }
 	}
