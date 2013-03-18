@@ -16,6 +16,7 @@ public class Game {
 	private int halfTimesCount;
 	private int currentHalfTime=0;
 	private boolean stoppingTime;
+	private boolean nonStoppingTimeGameIsRunning = false;
 	private boolean gameIsFinished;
 	
 	private String blue;
@@ -224,15 +225,16 @@ public class Game {
 			return;
 		}
 		
-		//TODO: Das hier wird zu oft aufgerufen (auch beim anhupen)
-		gameLog.createNewLogEntry(getCurrentGameTime());
-		
 		if(stoppingTime){
 			if(!isStopped()){
+				gameLog.createNewLogEntry(getCurrentGameTime());
 				stopClock();
 			}else{
 				resumeClock();
 			}
+		}else if(nonStoppingTimeGameIsRunning){
+			nonStoppingTimeGameIsRunning = !nonStoppingTimeGameIsRunning;
+			gameLog.createNewLogEntry(getCurrentGameTime());
 		}
 		
 		if(penaltyThrowRunning()){
