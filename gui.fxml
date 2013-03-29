@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="760.0" xmlns:fx="http://javafx.com/fxml">
+  <children>
+    <TabPane prefHeight="800.0" prefWidth="760.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <tabs>
+        <Tab text="Turniere">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          </content>
+        </Tab>
+        <Tab text="Spiele">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <SplitPane dividerPositions="0.20976253298153033" focusTraversable="true" prefHeight="764.0" prefWidth="760.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <items>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                      <children>
+                        <ListView prefHeight="762.0" prefWidth="156.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                      </children>
+                    </AnchorPane>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                      <children>
+                        <SplitPane dividerPositions="0.33289473684210524, 0.6671052631578948" focusTraversable="true" orientation="VERTICAL" prefHeight="762.0" prefWidth="596.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <items>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="632.0" prefWidth="594.0">
+                              <children>
+                                <GridPane prefHeight="104.0" prefWidth="594.0" AnchorPane.bottomAnchor="146.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                  <children>
+                                    <Label text="Date" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                    <Label text="Location" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                    <Label text="Tournament" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                    <Label text="Match No." GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                    <Label text="Start" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                                    <Label text="End" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <TextField prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                    <TextField prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <TextField prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <TextField prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <TextField prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                    <TextField prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                  </children>
+                                  <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="147.0" minWidth="10.0" prefWidth="91.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="207.0" minWidth="10.0" prefWidth="207.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="10.0" prefWidth="63.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="233.0" minWidth="10.0" prefWidth="233.0" />
+                                  </columnConstraints>
+                                  <rowConstraints>
+                                    <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="64.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="99.0" minHeight="10.0" prefHeight="62.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="62.0" minHeight="10.0" prefHeight="62.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="62.0" minHeight="10.0" prefHeight="62.0" vgrow="SOMETIMES" />
+                                  </rowConstraints>
+                                </GridPane>
+                                <Separator prefWidth="594.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="109.0" />
+                                <Text layoutX="272.0" layoutY="157.0" scaleX="3.5" scaleY="3.5" strokeType="OUTSIDE" strokeWidth="0.0" text="15:00" />
+                                <Text layoutX="31.0" layoutY="194.0" scaleX="2.0" scaleY="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2:00" />
+                                <Text layoutX="536.0" layoutY="194.0" scaleX="2.0" scaleY="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2:00" />
+                                <Text layoutX="282.0" layoutY="194.0" scaleX="2.0" scaleY="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="45" />
+                                <Text layoutX="561.0" layoutY="154.0" scaleX="3.5" scaleY="3.5" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+                                <Text scaleX="3.5" scaleY="3.5" strokeType="OUTSIDE" strokeWidth="0.0" text="0" AnchorPane.leftAnchor="24.0" AnchorPane.topAnchor="141.93" />
+                              </children>
+                            </AnchorPane>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="271.0" prefWidth="594.0">
+                              <children>
+                                <SplitPane disable="false" dividerPositions="0.49493243243243246" focusTraversable="true" prefHeight="248.0" prefWidth="594.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                  <items>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="-1.0" />
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="-1.0" />
+                                  </items>
+                                </SplitPane>
+                              </children>
+                            </AnchorPane>
+                            <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+                          </items>
+                        </SplitPane>
+                      </children>
+                    </AnchorPane>
+                  </items>
+                </SplitPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+  </children>
+</AnchorPane>
