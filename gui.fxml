@@ -8,9 +8,9 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="760.0" xmlns:fx="http://javafx.com/fxml">
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="760.0" xmlns:fx="http://javafx.com/fxml">
   <children>
-    <VBox prefHeight="800.0" prefWidth="760.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="760.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
         <MenuBar>
           <menus>
@@ -31,27 +31,46 @@
             </Menu>
           </menus>
         </MenuBar>
-        <TabPane prefHeight="800.0" prefWidth="760.0" tabClosingPolicy="UNAVAILABLE">
+        <TabPane prefHeight="800.0" prefWidth="760.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
           <tabs>
-            <Tab text="Turniere">
-              <content>
-                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-              </content>
-            </Tab>
-            <Tab text="Spiele">
+            <Tab closable="true" text="Spiele">
               <content>
                 <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
-                    <SplitPane dividerPositions="0.20184696569920843" focusTraversable="true" prefHeight="740.0" prefWidth="760.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <SplitPane dividerPositions="0.24406332453825857" focusTraversable="true" prefHeight="740.0" prefWidth="760.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                       <items>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                           <children>
                             <ListView prefHeight="762.0" prefWidth="156.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                           </children>
                         </AnchorPane>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                        <VBox id="VBox" alignment="CENTER" minWidth="300.0" spacing="5.0">
                           <children>
-                            <SplitPane dividerPositions="0.1509433962264151, 0.4669811320754717" focusTraversable="true" layoutX="0.0" orientation="VERTICAL" prefHeight="638.0" prefWidth="602.0" AnchorPane.topAnchor="101.0">
+                            <AnchorPane prefHeight="93.0" prefWidth="602.0">
+                              <children>
+                                <GridPane id="GridPane" prefHeight="93.0" prefWidth="578.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0">
+                                  <children>
+                                    <Text scaleX="2.0" scaleY="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="45" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+                                    <Text scaleX="3.5" scaleY="3.5" strokeType="OUTSIDE" strokeWidth="0.0" text="15:00" textOrigin="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                                    <Text scaleX="3.5" scaleY="3.5" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" />
+                                    <Text scaleX="2.0" scaleY="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2:00" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="0" />
+                                    <Text scaleX="2.0" scaleY="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2:00" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="0" />
+                                    <Text scaleX="3.5" scaleY="3.5" strokeType="OUTSIDE" strokeWidth="0.0" text="0" GridPane.columnIndex="0" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                                  </children>
+                                  <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                  </columnConstraints>
+                                  <rowConstraints>
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                  </rowConstraints>
+                                </GridPane>
+                              </children>
+                            </AnchorPane>
+                            <SplitPane dividerPositions="0.17711598746081506, 0.6661442006269592" focusTraversable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" prefHeight="631.0" prefWidth="602.0" VBox.vgrow="ALWAYS">
                               <items>
                                 <AnchorPane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="0.0" prefHeight="111.0" prefWidth="-1.0">
                                   <children>
@@ -91,9 +110,9 @@
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                   </padding>
                                 </AnchorPane>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="271.0" prefWidth="594.0">
+                                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="271.0" prefWidth="594.0">
                                   <children>
-                                    <SplitPane disable="false" dividerPositions="0.5" focusTraversable="true" maxHeight="-Infinity" minHeight="0.0" prefHeight="176.0" prefWidth="594.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <SplitPane disable="false" dividerPositions="0.49823321554770317" focusTraversable="true" maxHeight="-Infinity" minHeight="0.0" prefHeight="176.0" prefWidth="594.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <items>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
                                           <content>
@@ -106,26 +125,38 @@
                                             </TableView>
                                           </content>
                                         </ScrollPane>
-                                        <ScrollPane content="$null" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" />
+                                        <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+                                          <content>
+                                            <TableView disable="false" editable="true" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="279.0" tableMenuButtonVisible="true" visible="true">
+                                              <columns>
+                                                <TableColumn prefWidth="75.0" text="Team-Leader" />
+                                                <TableColumn prefWidth="75.0" text="No" />
+                                                <TableColumn prefWidth="75.0" text="Name" />
+                                              </columns>
+                                            </TableView>
+                                          </content>
+                                        </ScrollPane>
                                       </items>
                                     </SplitPane>
                                   </children>
                                 </AnchorPane>
                                 <AnchorPane prefHeight="200.0" prefWidth="200.0" />
                               </items>
+                              <VBox.margin>
+                                <Insets />
+                              </VBox.margin>
                             </SplitPane>
-                            <Text scaleX="3.5" scaleY="3.5" strokeType="OUTSIDE" strokeWidth="0.0" text="0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="30.0" />
-                            <Text layoutY="78.0" scaleX="2.0" scaleY="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2:00" AnchorPane.leftAnchor="20.0" />
-                            <Text layoutY="46.0" scaleX="3.5" scaleY="3.5" strokeType="OUTSIDE" strokeWidth="0.0" text="15:00" AnchorPane.leftAnchor="273.0" />
-                            <Text layoutX="283.0" layoutY="78.0" scaleX="2.0" scaleY="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="45" />
-                            <Text scaleX="3.5" scaleY="3.5" strokeType="OUTSIDE" strokeWidth="0.0" text="0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="30.0" />
-                            <Text layoutY="78.0" scaleX="2.0" scaleY="2.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2:00" AnchorPane.rightAnchor="20.0" />
                           </children>
-                        </AnchorPane>
+                        </VBox>
                       </items>
                     </SplitPane>
                   </children>
                 </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Turniere">
+              <content>
+                <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
             </Tab>
           </tabs>
